@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+*{
+  padding: 0;
+  margin:0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add padding to sections to account for fixed navbar */
+#home, #skills, #contact {
+  scroll-margin-top: 4rem;
+}
