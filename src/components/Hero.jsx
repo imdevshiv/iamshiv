@@ -7,6 +7,7 @@ import { supabase } from '../utils/supabase';
 
 export default function Hero() {
   const [resumeUrl, setResumeUrl] = useState('');
+  const [resumeError, setResumeError] = useState(false);
 
   useEffect(() => {
     const fetchResume = async () => {
@@ -14,14 +15,19 @@ export default function Hero() {
         const { data, error } = await supabase
           .from('resume')
           .select('url')
-          .single();
+          .limit(1)
+          .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
+
         if (data?.url) {
           setResumeUrl(data.url);
         }
       } catch (error) {
-        console.error('Error fetching resume:', error);
+        console.error('Error fetching resume:', error.message);
+        setResumeError(true);
       }
     };
 
@@ -52,38 +58,53 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="flex space-x-4 mt-8">
+        {/* Social Links */}
+        <div className="flex space-x-4">
           <a
-            href={resumeUrl || '/resume.pdf'}
+            href="https://github.com/yourusername"
             target="_blank"
             rel="noopener noreferrer"
-            className={`px-6 py-3 bg-purple-600 hover:bg-purple-700 
-              text-white font-medium rounded-lg 
-              transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 
-              shadow-lg hover:shadow-purple-500/25 `}
+            className="text-2xl hover:text-purple-400 transition-colors"
+          >
+            <FaGithub />
+          </a>
+          <a
+            href="https://linkedin.com/in/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-2xl hover:text-purple-400 transition-colors"
+          >
+            <FaLinkedinIn />
+          </a>
+          <a
+            href="https://twitter.com/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-2xl hover:text-purple-400 transition-colors"
+          >
+            <FaTwitter />
+          </a>
+          <a
+            href="https://dribbble.com/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-2xl hover:text-purple-400 transition-colors"
+          >
+            <FaDribbble />
+          </a>
+        </div>
+
+        {/* Resume Button */}
+        {!resumeError && resumeUrl && (
+          <a
+            href={resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
           >
             <span>View Resume</span>
           </a>
-          <Link
-            to="/projects"
-            className="px-6 py-3 bg-transparent hover:bg-white/10 backdrop-blur-sm border-2 border-purple-500 rounded-lg transition-all duration-300 flex items-center space-x-2 transform hover:scale-105"
-          >
-            <span>View Projects</span>
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-6 mt-4">
-          <a href="https://github.com" className="text-white/80 hover:text-white transition-colors">
-            <FaGithub className="w-6 h-6" />
-          </a>
-          
-          <a href="https://linkedin.com" className="text-white/80 hover:text-white transition-colors">
-            <FaLinkedinIn className="w-6 h-6" />
-          </a>
-          <a href="https://twitter.com" className="text-white/80 hover:text-white transition-colors">
-            <FaTwitter className="w-6 h-6" />
-          </a>
-        </div>
+        )}
       </div>
     </section>
   );

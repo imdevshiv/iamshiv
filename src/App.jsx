@@ -9,6 +9,7 @@ import Projects from './components/Projects'
 import LoadingScreen from './components/LoadingScreen'
 import Admin from './admin/Admin'
 import { supabase } from './utils/supabase'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // ScrollToTop component
 function ScrollToTop() {
@@ -68,12 +69,12 @@ const getDeviceInfo = (userAgent) => {
 // Track visitor function
 const trackVisitor = async () => {
   try {
-    // Get IP address
+    // Get IP address using a secure service
     const ipResponse = await fetch('https://api.ipify.org?format=json');
     const { ip } = await ipResponse.json();
     
-    // Get location data
-    const locationResponse = await fetch(`http://ip-api.com/json/${ip}`);
+    // Use secure HTTPS endpoint for location data
+    const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
     const locationData = await locationResponse.json();
     
     // Get device information
@@ -84,11 +85,11 @@ const trackVisitor = async () => {
       .from('visitors')
       .insert([{
         ip_address: ip,
-        country: locationData.country,
-        region: locationData.regionName,
+        country: locationData.country_name,
+        region: locationData.region,
         city: locationData.city,
-        latitude: locationData.lat,
-        longitude: locationData.lon,
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
         device_type: deviceInfo.type,
         operating_system: deviceInfo.os,
         browser: deviceInfo.browser,
@@ -96,7 +97,7 @@ const trackVisitor = async () => {
         visited_at: new Date().toISOString()
       }]);
   } catch (error) {
-    console.error('Error tracking visitor:', error);
+    console.error('Error details:', error);
   }
 };
 
@@ -134,30 +135,32 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Admin route */}
-        <Route path="/admin" element={<AdminLayout />} />
-        
-        {/* Main website routes */}
-        <Route path="/*" element={
-          <div className="min-h-screen bg-gradient-to-r from-black via-gray-900 to-blue-900">
-            {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
-            {!isLoading && (
-              <>
-                <ScrollToTop />
-                <Navbar />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/projects" element={<Projects />} />
-                </Routes>
-                <Footer />
-              </>
-            )}
-          </div>
-        } />
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          {/* Admin route */}
+          <Route path="/admin" element={<AdminLayout />} />
+          
+          {/* Main website routes */}
+          <Route path="/*" element={
+            <div className="min-h-screen bg-gradient-to-r from-black via-gray-900 to-blue-900">
+              {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
+              {!isLoading && (
+                <>
+                  <ScrollToTop />
+                  <Navbar />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/projects" element={<Projects />} />
+                  </Routes>
+                  <Footer />
+                </>
+              )}
+            </div>
+          } />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   )
 }
 
