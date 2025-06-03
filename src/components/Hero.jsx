@@ -102,7 +102,7 @@ export default function Hero() {
           )}
 
           <a
-            href="mailto:youremail@example.com"
+            href="mailto:shiv404050@gmail.com"
             className="px-6 py-3 sm:px-4 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors inline-flex items-center justify-center space-x-2 min-w-[120px]"
           >
             <span>Hire Me</span>
