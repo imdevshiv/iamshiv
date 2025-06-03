@@ -25,6 +25,6 @@ export const trackVisitor = async () => {
 
     if (error) throw error;
   } catch (error) {
-    // console.error('Error tracking visitor:', error);
+    console.error('Error tracking visitor:', error);
   }
 };

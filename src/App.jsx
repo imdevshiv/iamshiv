@@ -10,6 +10,7 @@ import LoadingScreen from './components/LoadingScreen'
 import Admin from './admin/Admin'
 import { supabase } from './utils/supabase'
 import ErrorBoundary from './components/ErrorBoundary'
+import { Toaster, toast } from 'react-hot-toast'
 
 // ScrollToTop component
 function ScrollToTop() {
@@ -81,7 +82,7 @@ const trackVisitor = async () => {
     const deviceInfo = getDeviceInfo(navigator.userAgent);
     
     // Store in Supabase
-    await supabase
+    const { error } = await supabase
       .from('visitors')
       .insert([{
         ip_address: ip,
@@ -96,8 +97,20 @@ const trackVisitor = async () => {
         user_agent: navigator.userAgent,
         visited_at: new Date().toISOString()
       }]);
+
+    if (error) {
+      throw error;
+    }
+
+    // toast.success('Welcome to my portfolio!', {
+    //   duration: 3000,
+    //   icon: '👋'
+    // });
   } catch (error) {
-    console.error('Error details:', error);
+    toast.error('Something went wrong', {
+      duration: 4000
+    });
+    console.error('Visitor tracking error:', error);
   }
 };
 
@@ -137,22 +150,45 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Router>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              theme: {
+                primary: '#4aed88',
+              },
+            },
+            error: {
+              duration: 4000,
+              theme: {
+                primary: '#ff4b4b',
+              },
+            },
+          }}
+        />
         <Routes>
           {/* Admin route */}
           <Route path="/admin" element={<AdminLayout />} />
           
           {/* Main website routes */}
           <Route path="/*" element={
-            <div className="min-h-screen bg-gradient-to-r from-black via-gray-900 to-blue-900">
+            <div className="min-h-screen bg-gradient-to-r from-black via-gray-900 to-blue-900 flex flex-col">
               {isLoading && <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />}
               {!isLoading && (
                 <>
                   <ScrollToTop />
                   <Navbar />
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/projects" element={<Projects />} />
-                  </Routes>
+                  <main className="flex-grow">
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/projects" element={<Projects />} />
+                    </Routes>
+                  </main>
                   <Footer />
                 </>
               )}

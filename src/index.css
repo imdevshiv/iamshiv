@@ -2,10 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 
-*{
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+* {
   padding: 0;
-  margin:0;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -14,6 +39,8 @@ html {
 }
 
 /* Add padding to sections to account for fixed navbar */
-#home, #skills, #contact {
+#home,
+#skills,
+#contact {
   scroll-margin-top: 4rem;
 }
