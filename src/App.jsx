@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Skills from './components/Skills'
@@ -15,7 +15,7 @@ import { Toaster, toast } from 'react-hot-toast'
 // ScrollToTop component
 function ScrollToTop() {
   const location = useLocation();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -73,14 +73,14 @@ const trackVisitor = async () => {
     // Get IP address using a secure service
     const ipResponse = await fetch('https://api.ipify.org?format=json');
     const { ip } = await ipResponse.json();
-    
+
     // Use secure HTTPS endpoint for location data
     const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
     const locationData = await locationResponse.json();
-    
+
     // Get device information
     const deviceInfo = getDeviceInfo(navigator.userAgent);
-    
+
     // Store in Supabase
     const { error } = await supabase
       .from('visitors')
@@ -187,6 +187,8 @@ const App = () => {
                     <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/projects" element={<Projects />} />
+                      {/* Redirect unknown routes to home */}
+                      <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </main>
                   <Footer />
