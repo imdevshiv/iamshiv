@@ -21,7 +21,7 @@ export default function Hero() {
         }
 
         if (data?.url) {
-          console.log("Resume URL:", data.url); // add this
+          // console.log("Resume URL:", data.url); 
           setResumeUrl(data.url);
         }
       } catch (error) {
